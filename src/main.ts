@@ -5,6 +5,10 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: process.env.NODE_ENV === 'development' ? '*' : 'http://menuda.ru',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Menuda REST API')
     .setVersion('1.0.0')
