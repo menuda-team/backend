@@ -1,11 +1,30 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class Product {
-    readonly name: string;
-    readonly id: number;
-    readonly imageUrl: string;
-    readonly weight: number;
-    readonly price: number;
-    readonly available: boolean;
-    readonly description?: string;
-    readonly salePrice?: number;
-    readonly category?: string;
+  @ApiProperty({ example: 'Бургер', description: 'Название блюда' })
+  readonly name: string;
+
+  @ApiProperty()
+  readonly id: number;
+
+  @ApiProperty()
+  readonly imageUrl: string;
+
+  @ApiProperty()
+  readonly weight: number;
+
+  @ApiProperty()
+  readonly price: number;
+
+  @ApiProperty()
+  readonly available: boolean;
+
+  @ApiProperty()
+  readonly description?: string;
+
+  @ApiProperty()
+  readonly salePrice?: number;
+
+  @ApiProperty()
+  readonly category?: string;
 }

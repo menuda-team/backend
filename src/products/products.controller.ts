@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@Controller('products')
+@Controller('api/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
@@ -13,8 +24,10 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  @ApiOperation({ summary: 'Получение списка блюд' })
+  @ApiResponse({ status: 200, type: [Product], isArray: true })
+  findAll(@Query('categoryId') categoryId): Product[] {
+    return this.productsService.findAll(categoryId);
   }
 
   @Get(':id')
