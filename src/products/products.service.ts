@@ -1,34 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { collections } from '../mocks';
-
-const { products, categories } = collections;
+import { InjectModel } from '@nestjs/mongoose';
+import { Product, ProductDocument } from './product.schema';
+import { Model } from 'mongoose';
+import { Category, CategoryDocument } from '../categories/category.schema';
 
 @Injectable()
 export class ProductsService {
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  constructor(
+    @InjectModel(Product.name) private productModel: Model<ProductDocument>,
+    @InjectModel(Category.name) private categoryModel: Model<CategoryDocument>,
+  ) {}
+
+  async create(createProductDto: CreateProductDto): Promise<Product> {
+    const createdProduct = new this.productModel(createProductDto);
+
+    await createdProduct.save(async () => {
+      for (const categoryId of createdProduct.categories) {
+        const category = await this.categoryModel.findById(categoryId);
+        category.products = [...category.products, createdProduct._id];
+        await category.save();
+      }
+    });
+
+    return createdProduct;
   }
 
-  findAll(categoryId: number) {
-    const category = categories[categoryId];
-    if (category) {
-      return category.products.map((id) => products[id]);
-    } else {
-      return Object.values(products);
-    }
+  async findAll(): Promise<Product[]> {
+    return this.productModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  findOne(id: string) {
+    return this.productModel.findById(id);
   }
-
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} product`;
-  }
+  //
+  // update(id: number, updateProductDto: UpdateProductDto) {
+  //   return `This action updates a #${id} product`;
+  // }
+  //
+  // remove(id: number) {
+  //   return `This action removes a #${id} product`;
+  // }
 }
