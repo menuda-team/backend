@@ -18,9 +18,11 @@ export class ProductsService {
 
     await createdProduct.save(async () => {
       for (const categoryId of createdProduct.categories) {
-        const category = await this.categoryModel.findById(categoryId);
-        category.products = [...category.products, createdProduct._id];
-        await category.save();
+        await this.categoryModel.findByIdAndUpdate(categoryId, {
+          $push: {
+            products: createdProduct._id,
+          },
+        });
       }
     });
 

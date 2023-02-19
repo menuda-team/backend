@@ -7,6 +7,8 @@ export type CategoryDocument = Category & Document;
 export class Category {
   @Prop({
     required: true,
+    unique: true,
+    index: true,
   })
   readonly name: string;
 
@@ -23,3 +25,7 @@ export class Category {
 }
 
 export const CategorySchema = SchemaFactory.createForClass(Category);
+
+export type CategoryListItem = Omit<Category, 'products'> & {
+  productsCount: number;
+};

@@ -22,7 +22,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     return response.status(status).json({
       timestamp: new Date().toISOString(),
       path: request.url,
-      errorMessage: exception,
+      errorMessage: exception.message,
       statusCode: status,
     });
   }

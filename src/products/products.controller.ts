@@ -20,7 +20,7 @@ import { Product } from './product.schema';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Post()
+  @Post('/create')
   @ApiOperation({ summary: 'Добавление продукта' })
   @ApiResponse({ status: 200, type: Product })
   async create(@Body() productDto: CreateProductDto) {

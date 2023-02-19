@@ -35,11 +35,21 @@ export class CategoriesController {
   findAll() {
     return this.categoriesService.findAll();
   }
-  //
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.categoriesService.findOne(id);
-  // }
+
+  @Get('/list')
+  getList() {
+    return this.categoriesService.getList();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.categoriesService.findOne(id);
+  }
+
+  @Get('/:id/products')
+  getProducts(@Param('id') id: string) {
+    return this.categoriesService.getProducts(id);
+  }
   //
   // @Patch(':id')
   // update(
