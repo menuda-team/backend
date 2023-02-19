@@ -2,45 +2,35 @@ import { Module } from '@nestjs/common';
 import { ProductsModule } from './products/products.module';
 import { ConfigModule } from '@nestjs/config';
 import { CategoriesModule } from './categories/categories.module';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as util from 'util';
 
-const DB_NAME = 'db1';
-
-const DB_HOSTS = ['rc1a-8ox4z31o4411bhmm.mdb.yandexcloud.net:27018'];
-
-const DB_RS = 'rs01';
-const DB_USER = 'user1';
-const DB_PASS = 'password';
-const CACERT = '/Users/danlaptev/.mongodb/root.crt';
-
-const url = util.format(
-  'mongodb://%s:%s@%s/',
-  DB_USER,
-  DB_PASS,
-  DB_HOSTS.join(','),
-);
-
-const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  tls: true,
-  tlsCAFile: CACERT,
-  authSource: DB_NAME,
-  replicaSet: DB_RS,
-  autoCreate: true,
-  dbName: DB_NAME,
-};
+const getDbUrl = () =>
+  util.format(
+    'mongodb://%s:%s@%s/',
+    process.env.DB_USER,
+    process.env.DB_PASS,
+    process.env.DB_HOST,
+  );
 
 @Module({
   imports: [
-    ProductsModule,
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
+    MongooseModule.forRoot(getDbUrl(), {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      tls: true,
+      tlsCAFile: process.env.CACERT,
+      authSource: process.env.DB_NAME,
+      replicaSet: process.env.DB_RS,
+      autoCreate: true,
+      dbName: process.env.DB_NAME,
+      retryAttempts: +process.env.RETRY_ATTEMPS,
+    }),
+    ProductsModule,
     CategoriesModule,
-    MongooseModule.forRoot(url, options),
   ],
 })
 export class AppModule {}
