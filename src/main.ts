@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: process.env.NODE_ENV === 'development' ? '*' : 'http://menuda.ru',
+    origin: process.env.NODE_ENV === 'development' ? '*' : 'https://menuda.ru',
   });
 
   const config = new DocumentBuilder()
