@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { Product, ProductSchema } from './product.schema';
 import { Category } from '../categories/categories.model';
-import { ProductCategories } from './product-categories.model';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategorySchema } from '../categories/category.schema';
 
