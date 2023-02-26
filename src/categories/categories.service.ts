@@ -7,6 +7,7 @@ import {
   CategoryListItem,
 } from './category.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -45,11 +46,11 @@ export class CategoriesService {
     return categoryWithProducts.products;
   }
 
-  // update(id: number, updateCategoryDto: UpdateCategoryDto) {
-  //   return `This action updates a #${id} category`;
-  // }
-  //
-  // remove(id: number) {
-  //   return `This action removes a #${id} category`;
-  // }
+  update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    return `This action updates a #${id} category`;
+  }
+
+  remove(id: string) {
+    return `This action removes a #${id} category`;
+  }
 }
