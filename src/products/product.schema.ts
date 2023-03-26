@@ -50,7 +50,7 @@ export class Product {
       },
     ],
   })
-  categories?: string;
+  categories?: string[];
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);
