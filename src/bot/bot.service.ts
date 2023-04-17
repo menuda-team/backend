@@ -13,7 +13,10 @@ export class BotService {
       provider_token: process.env.YO_KASSA_TEST_TOKEN,
       currency: 'RUB',
       payload: 'test',
-      prices,
+      prices: prices.map((price) => ({
+        ...price,
+        amount: rubToCents(price.amount),
+      })),
     });
   }
 }
