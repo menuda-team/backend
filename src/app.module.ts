@@ -5,6 +5,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import * as util from 'util';
+import { BotModule } from './bot/bot.module';
 
 const getDbUrl = () =>
   util.format(
@@ -33,6 +34,7 @@ const getDbUrl = () =>
     ProductsModule,
     CategoriesModule,
     UsersModule,
+    BotModule,
   ],
 })
 export class AppModule {}
