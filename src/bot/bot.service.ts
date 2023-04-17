@@ -12,7 +12,7 @@ export class BotService {
     const link = await bot.telegram.createInvoiceLink({
       title: 'Заказ',
       description: 'Описание',
-      provider_token: process.env.YO_KASSA_TEST_TOKEN,
+      provider_token: process.env.SBERBANK_TEST_TOKEN,
       currency: 'RUB',
       payload: 'test',
       prices: prices.map((price) => ({
