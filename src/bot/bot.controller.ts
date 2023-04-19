@@ -3,6 +3,7 @@ import { CreateInvoiceLinkDto } from './dto/create-invoice-link.dto';
 import { InjectBot } from 'nestjs-telegraf/dist/decorators/core/inject-bot.decorator';
 import { Telegraf, Context } from 'telegraf';
 import { UpdateType } from 'telegraf/typings/telegram-types';
+import type { Request } from 'express';
 
 const rubToCents = (rub: number) => rub * 100;
 
