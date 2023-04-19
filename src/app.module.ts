@@ -41,7 +41,7 @@ const getDbUrl = () =>
       token: process.env.BOT_TOKEN,
       launchOptions: {
         webhook: {
-          domain: process.env.BACKEND_DOMAIN,
+          domain: process.env.BACKEND_URL,
           hookPath: 'bot/update',
           secretToken: '123',
         },
