@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './exceptions.filter';
-import bot from './bot';
+// import bot from './bot';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +23,7 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT || 3000);
 
-  await bot.launch();
+  // await bot.launch();
 
   console.log(`Application is running on: ${await app.getUrl()}`);
 }

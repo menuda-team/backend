@@ -1,9 +1,9 @@
 import { Telegraf } from 'telegraf';
 
-const BOT_TOKEN = '5820129314:AAFxXiHY3Y28OUF32xKudHg2anxb7LfdJt4';
-const YO_KASSA_TEST_TOKEN = '381764678:TEST:53320';
+// console.log('!!!process.env.BOT_TOKEN:', process.env.BOT_TOKEN);
+// console.log('!!!process.env:', process.env);
 
-const bot = new Telegraf(BOT_TOKEN);
+// const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const START_MESSAGE = `
 Привет!
@@ -15,17 +15,19 @@ const START_MESSAGE = `
 Приятного аппетита 😋
 `;
 
-bot.telegram.setChatMenuButton({
-  menuButton: {
-    type: 'web_app',
-    text: 'Menu',
-    web_app: {
-      url: 'https://menuda.ru/menu',
-    },
-  },
-});
+// bot.telegram.setChatMenuButton({
+//   menuButton: {
+//     type: 'web_app',
+//     text: 'Menu',
+//     web_app: {
+//       url: `${process.env.CLIENT_URL}/menu`,
+//     },
+//   },
+// });
 
-bot.start((ctx) => ctx.reply(START_MESSAGE));
-bot.help((ctx) => ctx.reply(START_MESSAGE));
+// bot.start((ctx) => ctx.reply(START_MESSAGE));
+// bot.help((ctx) => ctx.reply(START_MESSAGE));
 
-export default bot;
+// bot.telegram.setWebhook(process.env.BACKEND_URL, {});
+
+// export default bot;

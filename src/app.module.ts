@@ -6,6 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import * as util from 'util';
 import { BotModule } from './bot/bot.module';
+import { TelegrafModule } from 'nestjs-telegraf';
+import * as process from 'process';
 
 const getDbUrl = () =>
   util.format(
@@ -35,6 +37,16 @@ const getDbUrl = () =>
     CategoriesModule,
     UsersModule,
     BotModule,
+    TelegrafModule.forRoot({
+      token: process.env.BOT_TOKEN,
+      launchOptions: {
+        webhook: {
+          domain: process.env.BACKEND_DOMAIN,
+          hookPath: 'bot/update',
+          secretToken: '123',
+        },
+      },
+    }),
   ],
 })
 export class AppModule {}
