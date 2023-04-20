@@ -1,0 +1,18 @@
+name: deploy to yandex cloud VM
+on: 
+  push:
+    branches:
+      - main
+    
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.BACKEND_VM_IP }}
+        username: ${{ secrets.BACKEND_VM_USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: whoami
