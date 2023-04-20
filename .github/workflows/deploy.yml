@@ -1,4 +1,4 @@
-name: deploy to yandex cloud VM
+name: Deploy to yandex cloud VM
 on: 
   push:
     branches:
@@ -6,10 +6,10 @@ on:
     
 jobs:
   build:
-    name: Build
+    name: Update and restart
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using ssh-key with passphrase
+    - name: Pulling updates from git, build and restart app
       uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.BACKEND_VM_IP }}
