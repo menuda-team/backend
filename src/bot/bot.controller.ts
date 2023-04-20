@@ -34,8 +34,6 @@ export class BotController {
 
   @Post('/update')
   async update(@Body() update: Update, @Req() request: Request) {
-    console.log('!!!request.headers:', request.headers);
-    console.log('!!!update:', update);
     if (
       request.headers['x-telegram-bot-api-secret-token'] ===
       process.env.WEBHOOK_SECRET_TOKEN
