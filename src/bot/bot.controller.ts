@@ -24,6 +24,9 @@ export class BotController {
         ...price,
         amount: rubToCents(price.amount),
       })),
+      need_name: true,
+      need_phone_number: true,
+      need_shipping_address: true,
     });
 
     return { link };
