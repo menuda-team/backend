@@ -34,7 +34,7 @@ export class BotController {
     console.log('!!!request.headers:', request.headers);
     console.log('!!!update:', update);
     if (
-      request.headers['X-Telegram-Bot-Api-Secret-Token'] ===
+      request.headers['x-telegram-bot-api-secret-token'] ===
       process.env.WEBHOOK_SECRET_TOKEN
     ) {
       await this.bot.handleUpdate(update);
