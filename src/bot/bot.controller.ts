@@ -3,7 +3,7 @@ import { CreateInvoiceLinkDto } from './dto/create-invoice-link.dto';
 import { InjectBot } from 'nestjs-telegraf/dist/decorators/core/inject-bot.decorator';
 import { Telegraf, Context } from 'telegraf';
 import type { Request } from 'express';
-import * as tg from 'telegraf/src/core/types/typegram';
+import type { Update } from 'typegram/update';
 
 const rubToCents = (rub: number) => rub * 100;
 
@@ -30,7 +30,7 @@ export class BotController {
   }
 
   @Post('/update')
-  async update(@Body() update: tg.Update, @Req() request: Request) {
+  async update(@Body() update: Update, @Req() request: Request) {
     console.log('!!!request.headers:', request.headers);
     console.log('!!!update:', update);
     if (
