@@ -16,4 +16,9 @@ jobs:
         username: ${{ secrets.BACKEND_VM_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        script: whoami
+        script: |
+          cd ./backend
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart startup
