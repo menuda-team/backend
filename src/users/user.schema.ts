@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 import { Product } from '../products/product.schema';
 
 export type CartItem = {
@@ -49,6 +49,17 @@ export class User {
     index: true,
   })
   readonly tgId: number;
+
+  @Prop({
+    required: true,
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
+      },
+    ],
+  })
+  orders?: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

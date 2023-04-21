@@ -20,9 +20,19 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get(':tgId')
+  findOne(@Param('tgId') tgId: string) {
+    return this.usersService.findOne(+tgId);
+  }
+
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @Get(':id/orders')
+  getOrders(@Param('id') tgId: string) {
+    return this.usersService.getOrders(+tgId);
   }
 
   @Get(':id/cart')

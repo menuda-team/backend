@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import * as util from 'util';
 import { BotModule } from './bot/bot.module';
 import { TelegrafModule } from 'nestjs-telegraf';
+import { OrdersModule } from './orders/orders.module';
 import * as process from 'process';
 
 const getDbUrl = () =>
@@ -47,6 +48,7 @@ const getDbUrl = () =>
         },
       },
     }),
+    OrdersModule,
   ],
 })
 export class AppModule {}

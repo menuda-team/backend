@@ -21,6 +21,23 @@ export class UsersService {
     return this.userModel.find();
   }
 
+  async getOrders(tgId: number) {
+    let user = await this.userModel
+      .findOne({
+        tgId,
+      })
+      .populate({
+        path: 'orders',
+        model: 'Order',
+      });
+
+    if (!user) {
+      user = await this.userModel.create({ tgId });
+    }
+
+    return user.orders;
+  }
+
   async getCart(tgId: number) {
     let user = await this.userModel
       .findOne({
