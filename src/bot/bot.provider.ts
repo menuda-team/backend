@@ -27,4 +27,9 @@ export class BotProvider {
   async checkout(@Ctx() ctx: Context) {
     await ctx.answerPreCheckoutQuery(true);
   }
+
+  @On('successful_payment')
+  async onMessage(@Ctx() ctx: Context) {
+    console.log('ctx.message!!!:', ctx.message);
+  }
 }
