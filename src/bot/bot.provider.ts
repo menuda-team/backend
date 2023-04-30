@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Start, Ctx, Update, Help, On } from 'nestjs-telegraf';
+import { Start, Ctx, Update, On } from 'nestjs-telegraf';
 import { InjectBot } from 'nestjs-telegraf/dist/decorators/core/inject-bot.decorator';
 import { Telegraf, Context } from 'telegraf';
 import { Update as UpdateType } from 'typegram/update';
 import { Message } from 'typegram/message';
 import { OrdersService } from '../orders/orders.service';
-import { Order, OrderItem } from '../orders/order.schema';
+import { UsersService } from '../users/users.service';
 
 const START_MESSAGE = `
 Привет!
@@ -23,6 +23,7 @@ export class BotProvider {
   constructor(
     @InjectBot() private bot: Telegraf<Context>,
     private readonly ordersService: OrdersService,
+    private readonly usersService: UsersService,
   ) {}
 
   @Start()
@@ -41,8 +42,8 @@ export class BotProvider {
     ctx: Context<UpdateType.MessageUpdate<Message.SuccessfulPaymentMessage>>,
   ) {
     const { id: userId } = ctx.message.from;
-    const { invoice_payload, total_amount } = ctx.message.successful_payment;
-    const { items } = JSON.parse(invoice_payload) as { items: OrderItem[] };
+    const { total_amount } = ctx.message.successful_payment;
+    const { items } = await this.usersService.getCart(userId);
 
     await this.ordersService.create({
       items,

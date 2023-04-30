@@ -1,15 +1,9 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
-import { Product, ProductDocument } from '../products/product.schema';
+import { Product } from '../products/product.schema';
 
 export type CartItem = {
   product: string;
-  count: number;
-  price: number;
-};
-
-export type CartItemRich = {
-  product: ProductDocument;
   count: number;
   price: number;
 };

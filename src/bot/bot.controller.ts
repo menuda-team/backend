@@ -15,23 +15,16 @@ export class BotController {
   constructor(@InjectBot() private bot: Telegraf<Context>) {}
 
   @Post('/createInvoiceLink')
-  async create(@Body() { items }: CreateInvoiceLinkDto) {
-    const order: { items: OrderItem[] } = {
-      items: items.map(({ product, ...rest }) => ({
-        ...rest,
-        product: product._id,
-      })),
-    };
-
+  async create(@Body() { prices }: CreateInvoiceLinkDto) {
     const link = await this.bot.telegram.createInvoiceLink({
       title: 'Заказ',
       description: 'Описание',
       provider_token: process.env.SBERBANK_TEST_TOKEN,
       currency: 'RUB',
-      payload: JSON.stringify(order),
-      prices: items.map((item) => ({
-        label: item.product.name,
-        amount: rubToCents(item.product.price * item.count),
+      payload: '',
+      prices: prices.map(({ label, amount }) => ({
+        label,
+        amount: rubToCents(amount),
       })),
       need_name: true,
       need_phone_number: true,
