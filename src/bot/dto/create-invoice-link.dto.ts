@@ -1,5 +1,5 @@
-import { LabeledPrice } from 'typegram';
+import { CartItemRich } from '../../users/user.schema';
 
 export class CreateInvoiceLinkDto {
-  readonly prices: LabeledPrice[];
+  readonly items: CartItemRich[];
 }
