@@ -21,7 +21,7 @@ export class BotController {
       description: 'Описание',
       provider_token: process.env.SBERBANK_TEST_TOKEN,
       currency: 'RUB',
-      payload: '',
+      payload: 'wtf',
       prices: prices.map(({ label, amount }) => ({
         label,
         amount: rubToCents(amount),
