@@ -35,9 +35,7 @@ export class BotsService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    console.log('!!!onModuleInit');
     const bots = await this.botModel.find().exec();
-    console.log('!!!bots:', bots);
     const promises = bots.map(({ token }) => this.setWebhook(token));
 
     await Promise.all(promises);
@@ -97,8 +95,8 @@ export class BotsService implements OnModuleInit {
     return this.botModel.findOne({ login }).exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bot`;
+  findById(id: string) {
+    return this.botModel.findById(id).exec();
   }
 
   update(id: number, updateBotDto: UpdateBotDto) {

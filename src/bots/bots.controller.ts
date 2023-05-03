@@ -14,10 +14,20 @@ import { UpdateBotDto } from './dto/update-bot.dto';
 import { Update } from 'typegram/update';
 import { Request } from 'express';
 import { Telegraf } from 'telegraf';
+import { CreateInvoiceLinkDto } from './dto/create-invoice-link.dto';
+import { createBot } from './bots.factory';
+import { UsersService } from '../users/users.service';
+import { OrdersService } from '../orders/orders.service';
+
+const rubToCents = (rub: number) => rub * 100;
 
 @Controller('bots')
 export class BotsController {
-  constructor(private readonly botsService: BotsService) {}
+  constructor(
+    private readonly botsService: BotsService,
+    private readonly usersService: UsersService,
+    private readonly ordersService: OrdersService,
+  ) {}
 
   @Post('/create')
   create(@Body() createBotDto: CreateBotDto) {
@@ -30,8 +40,8 @@ export class BotsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.botsService.findOne(+id);
+  findById(@Param('id') id: string) {
+    return this.botsService.findById(id);
   }
 
   @Get(':id/products')
@@ -61,10 +71,38 @@ export class BotsController {
       request.headers['x-telegram-bot-api-secret-token'] ===
       process.env.WEBHOOK_SECRET_TOKEN
     ) {
-      const bot = new Telegraf(token);
-      bot.start((ctx) => ctx.reply('Hello'));
+      const bot = createBot({
+        token,
+        usersService: this.usersService,
+        botsService: this.botsService,
+        ordersService: this.ordersService,
+      });
 
       await bot.handleUpdate(update);
     }
+  }
+
+  @Post('/createInvoiceLink')
+  async createInvoiceLink(@Body() { prices, botId }: CreateInvoiceLinkDto) {
+    const { token } = await this.botsService.findById(botId);
+
+    const bot = new Telegraf(token);
+
+    const link = await bot.telegram.createInvoiceLink({
+      title: 'Заказ',
+      description: 'Описание',
+      provider_token: process.env.SBERBANK_TEST_TOKEN,
+      currency: 'RUB',
+      payload: 'wtf',
+      prices: prices.map(({ label, amount }) => ({
+        label,
+        amount: rubToCents(amount),
+      })),
+      need_name: true,
+      need_phone_number: true,
+      need_shipping_address: true,
+    });
+
+    return { link };
   }
 }
