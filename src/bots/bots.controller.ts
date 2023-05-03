@@ -44,9 +44,26 @@ export class BotsController {
     return this.botsService.findById(id);
   }
 
-  @Get(':id/products')
-  getProducts(@Param('id') id: string) {
-    return this.botsService.getProducts(id);
+  @Get(':categoryId/products')
+  getProductsByCategory(
+    @Param('categoryId') categoryId: string,
+    @Req() request: Request,
+  ) {
+    const botId = request.headers['bot-id'];
+
+    return this.botsService.getProductsByCategory(
+      categoryId,
+      Array.isArray(botId) ? botId[0] : botId,
+    );
+  }
+
+  @Get('/categories/list')
+  getCategoriesList(@Req() request: Request) {
+    const botId = request.headers['bot-id'];
+
+    return this.botsService.getCategoriesList(
+      Array.isArray(botId) ? botId[0] : botId,
+    );
   }
 
   @Patch(':id')

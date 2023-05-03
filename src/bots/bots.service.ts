@@ -3,18 +3,11 @@ import { CreateBotDto } from './dto/create-bot.dto';
 import { UpdateBotDto } from './dto/update-bot.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BotDocument, Bot } from './bots.schema';
+import { BotDocument, Bot, Category } from './bots.schema';
 import { Product, ProductDocument } from '../products/product.schema';
 import { CreateProductDto } from '../products/dto/create-product.dto';
-import fs from 'fs';
 import { Telegraf } from 'telegraf';
-
-const addTokenToFile = (token: string) =>
-  fs.appendFile(process.env.TOKENS_FILE_PATH, token, (err) => {
-    if (err) {
-      console.error(err.message);
-    }
-  });
+import { CategoryListItem } from './bots.schema';
 
 @Injectable()
 export class BotsService implements OnModuleInit {
@@ -42,24 +35,35 @@ export class BotsService implements OnModuleInit {
   }
 
   async create(body: CreateBotDto) {
-    const promises = body.products.map((product) =>
-      this.productModel.create(product),
+    const createdProducts = await Promise.all(
+      body.products.map((product) => this.productModel.create(product)),
     );
 
-    (await Promise.all(promises)).forEach((product) => product.save());
+    createdProducts.forEach((product) => product.save());
 
-    const productIds = (await Promise.all(promises)).map(
-      (product) => product._id,
-    );
+    const categories = createdProducts.reduce((acc, product) => {
+      product.categories.forEach((categoryName) => {
+        const categoryIndex = acc.findIndex(
+          ({ name }) => name === categoryName,
+        );
+
+        if (categoryIndex === -1) {
+          acc.push({ name: categoryName, products: [product._id] });
+        } else {
+          acc[categoryIndex].products.push(product._id);
+        }
+      });
+
+      return acc;
+    }, [] as Category[]);
 
     const bot = await this.botModel.create({
       ...body,
-      products: productIds,
+      categories,
+      products: createdProducts.map(({ _id }) => _id),
     });
 
-    this.setWebhook(body.token).then(() =>
-      console.log('!!!webhook has been set'),
-    );
+    await this.setWebhook(body.token);
 
     return bot.save();
   }
@@ -67,8 +71,10 @@ export class BotsService implements OnModuleInit {
   async addProduct(botId: string, createProductDto: CreateProductDto) {
     const createdProduct = await this.productModel.create(createProductDto);
 
+    const bot = await this.botModel.findById(botId);
+
     await createdProduct.save(async () =>
-      this.botModel.findByIdAndUpdate(botId, {
+      bot.update({
         $push: {
           products: createdProduct._id,
         },
@@ -78,6 +84,16 @@ export class BotsService implements OnModuleInit {
     return createdProduct;
   }
 
+  async getCategoriesList(botId: string): Promise<CategoryListItem[]> {
+    const bot = await this.botModel.findById(botId);
+
+    return bot.categories.map(({ name, products, _id }) => ({
+      name,
+      _id,
+      productsCount: products.length,
+    }));
+  }
+
   async getProducts(botId: string) {
     const bot = await this.botModel.findById(botId).populate({
       path: 'products',
@@ -85,6 +101,18 @@ export class BotsService implements OnModuleInit {
     });
 
     return bot.products;
+  }
+
+  async getProductsByCategory(categoryId: string, botId: string) {
+    const bot = await this.botModel.findById(botId);
+
+    const category = bot.categories.find(
+      ({ _id }) => _id.toString() === categoryId,
+    );
+
+    return await Promise.all(
+      category.products.map((id) => this.productModel.findById(id)),
+    );
   }
 
   findAll() {

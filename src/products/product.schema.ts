@@ -9,8 +9,6 @@ export class Product {
   @ApiProperty({ example: 'Бургер', description: 'Название блюда' })
   @Prop({
     required: true,
-    unique: true,
-    index: true,
   })
   readonly name: string;
 

@@ -7,8 +7,6 @@ export type CategoryDocument = Category & Document;
 export class Category {
   @Prop({
     required: true,
-    unique: true,
-    index: true,
   })
   readonly name: string;
 

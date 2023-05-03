@@ -16,18 +16,17 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto): Promise<Product> {
     const createdProduct = new this.productModel(createProductDto);
 
-    await createdProduct.save(async () => {
-      for (const categoryName of createProductDto.categories) {
-        await this.categoryModel.findOneAndUpdate(
-          { name: categoryName },
-          {
-            $push: {
-              products: createdProduct._id,
-            },
-          },
-        );
-      }
-    });
+    // await createdProduct.save(async () => {
+    //   for (const categoryId of createProductDto.categories) {
+    //     await this.categoryModel.findByIdAndUpdate(categoryId, {
+    //       $push: {
+    //         products: createdProduct._id,
+    //       },
+    //     });
+    //   }
+    // });
+
+    await createdProduct.save();
 
     return createdProduct;
   }

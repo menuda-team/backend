@@ -1,7 +1,19 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
+import { Product } from '../products/product.schema';
 
 export type BotDocument = Bot & Document;
+
+export type Category = {
+  name: string;
+  products: string[];
+};
+
+export type CategoryListItem = Omit<Category, 'products'> & {
+  productsCount: number;
+};
+
+export type CategoryDocument = Category & Document;
 
 @Schema()
 export class Bot {
@@ -58,8 +70,22 @@ export class Bot {
 
   @Prop({
     required: true,
+    type: [
+      {
+        name: String,
+        products: {
+          _id: false,
+          type: [
+            {
+              type: Types.ObjectId,
+              ref: Product,
+            },
+          ],
+        },
+      },
+    ],
   })
-  categories: string[];
+  categories: CategoryDocument[];
 }
 
 export const BotSchema = SchemaFactory.createForClass(Bot);
