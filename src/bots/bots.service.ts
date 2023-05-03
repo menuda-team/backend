@@ -35,7 +35,9 @@ export class BotsService implements OnModuleInit {
   }
 
   async onModuleInit() {
+    console.log('!!!onModuleInit');
     const bots = await this.botModel.find().exec();
+    console.log('!!!bots:', bots);
     const promises = bots.map(({ token }) => this.setWebhook(token));
 
     await Promise.all(promises);
