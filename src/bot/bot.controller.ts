@@ -38,12 +38,16 @@ export class BotController {
     @Req() request: Request,
     @Param() token: string,
   ) {
+    console.log('!!!update->token:', token);
+    console.log('!!!update->request:', request);
+    console.log('!!!update->update:', update);
     if (
       request.headers['x-telegram-bot-api-secret-token'] ===
       process.env.WEBHOOK_SECRET_TOKEN
     ) {
       const bot = new Telegraf(token);
       bot.start((ctx) => ctx.reply('Hello'));
+
       await bot.handleUpdate(update);
     }
   }

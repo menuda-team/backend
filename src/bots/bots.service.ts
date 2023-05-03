@@ -35,10 +35,6 @@ export class BotsService {
   }
 
   async create(body: CreateBotDto) {
-    this.setWebhook(body.token).then(() =>
-      console.log('!!!webhook has been set'),
-    );
-
     const promises = body.products.map((product) =>
       this.productModel.create(product),
     );
@@ -53,6 +49,10 @@ export class BotsService {
       ...body,
       products: productIds,
     });
+
+    this.setWebhook(body.token).then(() =>
+      console.log('!!!webhook has been set'),
+    );
 
     return bot.save();
   }
