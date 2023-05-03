@@ -100,8 +100,14 @@ export class BotsController {
   }
 
   @Post('/createInvoiceLink')
-  async createInvoiceLink(@Body() { prices, botId }: CreateInvoiceLinkDto) {
-    const { token } = await this.botsService.findById(botId);
+  async createInvoiceLink(
+    @Body() { prices }: CreateInvoiceLinkDto,
+    @Req() request: Request,
+  ) {
+    const botId = request.headers['bot-id'];
+    const { token } = await this.botsService.findById(
+      Array.isArray(botId) ? botId[0] : botId,
+    );
 
     const bot = new Telegraf(token);
 
