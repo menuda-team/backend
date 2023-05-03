@@ -8,7 +8,10 @@ import * as util from 'util';
 import { BotModule } from './bot/bot.module';
 import { TelegrafModule } from 'nestjs-telegraf';
 import { OrdersModule } from './orders/orders.module';
+import { BotsModule } from './bots/bots.module';
+import { AdminsModule } from './admins/admins.module';
 import * as process from 'process';
+import * as fs from 'fs';
 
 const getDbUrl = () =>
   util.format(
@@ -17,6 +20,9 @@ const getDbUrl = () =>
     process.env.DB_PASS,
     process.env.DB_HOST,
   );
+
+const getTokens = (path) =>
+  fs.readFileSync(path).toString().split('\n').filter(Boolean);
 
 @Module({
   imports: [
@@ -38,17 +44,21 @@ const getDbUrl = () =>
     CategoriesModule,
     UsersModule,
     BotModule,
-    TelegrafModule.forRoot({
-      token: process.env.BOT_TOKEN,
-      launchOptions: {
-        webhook: {
-          domain: process.env.BACKEND_URL,
-          hookPath: '/bot/update',
-          secretToken: process.env.WEBHOOK_SECRET_TOKEN,
-        },
-      },
-    }),
+    // ...getTokens(process.env.TOKENS_FILE_PATH).map((token) =>
+    //   TelegrafModule.forRoot({
+    //     token,
+    //     launchOptions: {
+    //       webhook: {
+    //         domain: process.env.BACKEND_URL,
+    //         hookPath: '/bot/update',
+    //         secretToken: process.env.WEBHOOK_SECRET_TOKEN,
+    //       },
+    //     },
+    //   }),
+    // ),
     OrdersModule,
+    BotsModule,
+    AdminsModule,
   ],
 })
 export class AppModule {}

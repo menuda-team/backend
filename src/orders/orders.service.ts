@@ -4,12 +4,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '../users/user.schema';
 import { Model } from 'mongoose';
 import { OrderDocument, Order } from './order.schema';
+import { Bot, BotDocument } from '../bots/bots.schema';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<OrderDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(Bot.name) private botModel: Model<BotDocument>,
   ) {}
   async create(createOrderDto: CreateOrderDto) {
     const createdOrder = new this.orderModel(createOrderDto);
@@ -29,6 +31,12 @@ export class OrdersService {
           },
         },
       );
+
+      await this.botModel.findByIdAndUpdate(createdOrder.bot, {
+        $push: {
+          orders: createdOrder._id,
+        },
+      });
     });
 
     return createdOrder.populate({

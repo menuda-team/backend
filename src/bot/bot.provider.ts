@@ -6,6 +6,7 @@ import { Update as UpdateType } from 'typegram/update';
 import { Message } from 'typegram/message';
 import { OrdersService } from '../orders/orders.service';
 import { UsersService } from '../users/users.service';
+import { BotsService } from '../bots/bots.service';
 
 const START_MESSAGE = `
 Привет!
@@ -24,6 +25,7 @@ export class BotProvider {
     @InjectBot() private bot: Telegraf<Context>,
     private readonly ordersService: OrdersService,
     private readonly usersService: UsersService,
+    private readonly botsService: BotsService,
   ) {}
 
   @Start()
@@ -41,14 +43,19 @@ export class BotProvider {
     @Ctx()
     ctx: Context<UpdateType.MessageUpdate<Message.SuccessfulPaymentMessage>>,
   ) {
+    const botLogin = ctx.botInfo.username;
+    const bot = await this.botsService.findByLogin(botLogin);
+
     const { id: userId } = ctx.message.from;
     const { total_amount } = ctx.message.successful_payment;
     const { items } = await this.usersService.getCart(userId);
 
+    // TODO: надо как-то узнать id бота в телеграме и прорастить его в нашу бд с ботами
     await this.ordersService.create({
       items,
       totalAmount: total_amount,
       user: userId,
+      bot: bot._id,
     });
   }
 }

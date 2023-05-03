@@ -4,4 +4,5 @@ export class CreateOrderDto {
   readonly items: OrderItem[];
   readonly totalAmount: number;
   readonly user: number;
+  readonly bot: string;
 }

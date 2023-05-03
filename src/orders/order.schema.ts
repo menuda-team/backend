@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document, Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Product } from '../products/product.schema';
 
@@ -43,7 +43,15 @@ export class Order {
     type: Number,
     ref: 'User',
   })
-  user?: string;
+  user: string;
+
+  @ApiProperty()
+  @Prop({
+    required: true,
+    type: Types.ObjectId,
+    ref: 'Bot',
+  })
+  bot: string;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

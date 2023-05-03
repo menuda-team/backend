@@ -43,12 +43,6 @@ export class Product {
   @ApiProperty()
   @Prop({
     required: true,
-    type: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
-      },
-    ],
   })
   categories?: string[];
 }

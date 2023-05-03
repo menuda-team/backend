@@ -9,8 +9,8 @@ import { CategorySchema, Category } from '../categories/category.schema';
   controllers: [ProductsController],
   providers: [ProductsService],
   imports: [
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
     MongooseModule.forFeature([
+      { name: Product.name, schema: ProductSchema },
       { name: Category.name, schema: CategorySchema },
     ]),
   ],

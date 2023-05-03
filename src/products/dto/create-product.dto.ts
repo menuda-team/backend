@@ -9,5 +9,5 @@ export class CreateProductDto {
   readonly available: boolean;
   readonly description?: string;
   readonly salePrice?: number;
-  categories: string[];
+  readonly categories: string[];
 }
