@@ -16,12 +16,12 @@ export class BotsService implements OnModuleInit {
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
   ) {}
 
-  async setWebhook(token: string) {
+  async setWebhook(token: string, id: string) {
     const bot = new Telegraf(token);
     await bot.launch({
       webhook: {
         domain: process.env.BACKEND_URL,
-        hookPath: `/bots/update/${token}`,
+        hookPath: `/bots/update/${token}?id=${id}`,
         secretToken: process.env.WEBHOOK_SECRET_TOKEN,
       },
     });
@@ -29,7 +29,7 @@ export class BotsService implements OnModuleInit {
 
   async onModuleInit() {
     const bots = await this.botModel.find().exec();
-    const promises = bots.map(({ token }) => this.setWebhook(token));
+    const promises = bots.map(({ token, _id }) => this.setWebhook(token, _id));
 
     await Promise.all(promises);
   }
@@ -63,7 +63,7 @@ export class BotsService implements OnModuleInit {
       products: createdProducts.map(({ _id }) => _id),
     });
 
-    await this.setWebhook(body.token);
+    await this.setWebhook(body.token, bot._id);
 
     return bot.save();
   }

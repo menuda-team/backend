@@ -18,13 +18,15 @@ type CreateBotParams = {
   botsService: BotsService;
   usersService: UsersService;
   ordersService: OrdersService;
+  botId: string;
 };
 
-export const createBot = ({
+export const createBot = async ({
   token,
   botsService,
   usersService,
   ordersService,
+  botId,
 }: CreateBotParams) => {
   const bot = new Telegraf(token);
 
@@ -46,6 +48,16 @@ export const createBot = ({
       user: userId,
       bot: bot._id,
     });
+  });
+
+  await bot.telegram.setChatMenuButton({
+    menuButton: {
+      type: 'web_app',
+      text: 'Меню',
+      web_app: {
+        url: `https://menuda.ru/menu?bot-id=${botId}`,
+      },
+    },
   });
 
   return bot;

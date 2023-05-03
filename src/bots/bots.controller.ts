@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { BotsService } from './bots.service';
 import { CreateBotDto } from './dto/create-bot.dto';
@@ -81,6 +82,7 @@ export class BotsController {
     @Body() update: Update,
     @Req() request: Request,
     @Param('token') token: string,
+    @Query('id') id: string,
   ) {
     console.log('!!!webhookUpdate->token:', token);
     console.log('!!!webhookUpdate->update:', update);
@@ -88,11 +90,12 @@ export class BotsController {
       request.headers['x-telegram-bot-api-secret-token'] ===
       process.env.WEBHOOK_SECRET_TOKEN
     ) {
-      const bot = createBot({
+      const bot = await createBot({
         token,
         usersService: this.usersService,
         botsService: this.botsService,
         ordersService: this.ordersService,
+        botId: id,
       });
 
       await bot.handleUpdate(update);
