@@ -28,7 +28,7 @@ export class BotsService implements OnModuleInit {
     await bot.launch({
       webhook: {
         domain: process.env.BACKEND_URL,
-        hookPath: `/bot/update/${token}`,
+        hookPath: `/bots/update/${token}`,
         secretToken: process.env.WEBHOOK_SECRET_TOKEN,
       },
     });
