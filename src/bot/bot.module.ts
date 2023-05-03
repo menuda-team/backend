@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { BotProvider } from './bot.provider';
 import { BotController } from './bot.controller';
 import { OrdersService } from '../orders/orders.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -7,7 +6,6 @@ import { Order, OrderSchema } from '../orders/order.schema';
 import { User, UserSchema } from '../users/user.schema';
 import { UsersService } from '../users/users.service';
 import { Product, ProductSchema } from '../products/product.schema';
-import { BotsService } from '../bots/bots.service';
 import { BotSchema, Bot } from '../bots/bots.schema';
 
 @Module({
@@ -15,7 +13,6 @@ import { BotSchema, Bot } from '../bots/bots.schema';
     // BotProvider,
     OrdersService,
     UsersService,
-    BotsService,
   ],
   controllers: [BotController],
   imports: [

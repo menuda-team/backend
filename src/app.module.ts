@@ -43,7 +43,7 @@ const getTokens = (path) =>
     ProductsModule,
     CategoriesModule,
     UsersModule,
-    BotModule,
+    // BotModule,
     // ...getTokens(process.env.TOKENS_FILE_PATH).map((token) =>
     //   TelegrafModule.forRoot({
     //     token,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { CreateBotDto } from './dto/create-bot.dto';
 import { UpdateBotDto } from './dto/update-bot.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -17,7 +17,7 @@ const addTokenToFile = (token: string) =>
   });
 
 @Injectable()
-export class BotsService {
+export class BotsService implements OnModuleInit {
   constructor(
     @InjectModel(Bot.name) private botModel: Model<BotDocument>,
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
@@ -32,6 +32,13 @@ export class BotsService {
         secretToken: process.env.WEBHOOK_SECRET_TOKEN,
       },
     });
+  }
+
+  async onModuleInit() {
+    const bots = await this.botModel.find().exec();
+    const promises = bots.map(({ token }) => this.setWebhook(token));
+
+    await Promise.all(promises);
   }
 
   async create(body: CreateBotDto) {
