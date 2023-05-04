@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { OrdersService } from '../orders/orders.service';
 import { UserSchema, User } from '../users/user.schema';
 import { Order, OrderSchema } from '../orders/order.schema';
+import { Cart, CartSchema } from '../carts/carts.schema';
 
 @Module({
   controllers: [BotsController],
@@ -18,6 +19,7 @@ import { Order, OrderSchema } from '../orders/order.schema';
       { name: Product.name, schema: ProductSchema },
       { name: User.name, schema: UserSchema },
       { name: Order.name, schema: OrderSchema },
+      { name: Cart.name, schema: CartSchema },
     ]),
   ],
 })

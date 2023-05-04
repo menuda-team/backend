@@ -2,19 +2,34 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { UserDocument, User } from './user.schema';
 import { Product, ProductDocument } from '../products/product.schema';
+import { Cart, CartDocument } from '../carts/carts.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     @InjectModel(Product.name) private productModel: Model<ProductDocument>,
+    @InjectModel(Cart.name) private cartModel: Model<CartDocument>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
-    return this.userModel.create(createUserDto);
+  async create(createUserDto: CreateUserDto, botId: string) {
+    const user = await this.userModel.create(createUserDto);
+
+    const cart = await this.cartModel.create({
+      user: user.tgId,
+      bot: botId,
+    });
+
+    await user.updateOne({
+      $push: {
+        carts: cart._id,
+      },
+    });
+
+    return this.userModel.findOne({ tgId: user.tgId });
   }
 
   findAll() {
@@ -38,21 +53,44 @@ export class UsersService {
     return user.orders;
   }
 
-  async getCart(tgId: number) {
+  async getCart(tgId: number, botId: string) {
     let user = await this.userModel
       .findOne({
         tgId,
       })
-      .populate({
-        path: 'cart.items.product',
-        model: 'Product',
+      .populate<{ carts: Cart[] }>({
+        path: 'carts',
+        model: 'Cart',
       });
 
     if (!user) {
-      user = await this.userModel.create({ tgId });
+      const newUser = await this.create({ tgId }, botId);
+
+      user = await newUser.populate<{ carts: Cart[] }>({
+        path: 'carts',
+        model: 'Cart',
+      });
     }
 
-    return user.cart;
+    const cart = user.carts.find(({ bot }) => bot.toString() === botId);
+    let cartModel;
+
+    if (!cart) {
+      cartModel = await this.cartModel.create({
+        user: tgId,
+        bot: botId,
+      });
+
+      user.carts.push(cartModel._id);
+      user.save();
+    } else {
+      cartModel = new this.cartModel(cart);
+    }
+
+    return cartModel.populate({
+      path: 'items.product',
+      model: 'Product',
+    });
   }
 
   async findOne(tgId: number) {
@@ -67,146 +105,8 @@ export class UsersService {
     });
   }
 
-  async addToCart(tgId: number, productId: string, count: number) {
-    let user = await this.userModel.findOne({
-      tgId,
-    });
-
-    if (!user) {
-      user = await this.userModel.create({ tgId });
-    }
-
-    // Check if the productId is a valid ObjectId
-    if (!Types.ObjectId.isValid(productId)) {
-      throw new Error('Invalid productId');
-    }
-
-    const cartProductIndex = user.cart.items.findIndex(
-      (item) => item.product.toString() === productId,
-    );
-
-    const product = await this.productModel.findById(productId);
-
-    let cartItemCountResult;
-
-    if (cartProductIndex >= 0) {
-      // If product already exists in cart, update its quantity
-      user.cart.items[cartProductIndex].count += count;
-      cartItemCountResult = user.cart.items[cartProductIndex].count;
-    } else {
-      // If product doesn't exist in cart, add it as a new item
-      user.cart.items.push({ product: productId, count, price: product.price });
-      cartItemCountResult = count;
-    }
-
-    user.cart.totalAmount += count * product.price;
-
-    await user.save();
-
-    return {
-      product,
-      count: cartItemCountResult,
-      price: product.price,
-    };
-  }
-
-  recalculateCartTotalAmount(user: User) {
-    return user.cart.items.reduce(
-      (total, item) => total + item.price * item.count,
-      0,
-    );
-  }
-
-  async setCartItemsCount(tgId: number, productId: string, count: number) {
-    let user = await this.userModel.findOne({
-      tgId,
-    });
-
-    if (!user) {
-      user = await this.userModel.create({ tgId });
-    }
-
-    // Check if the productId is a valid ObjectId
-    if (!Types.ObjectId.isValid(productId)) {
-      throw new Error('Invalid productId');
-    }
-
-    const cartProductIndex = user.cart.items.findIndex(
-      (item) => item.product.toString() === productId,
-    );
-
-    const product = await this.productModel.findById(productId);
-
-    let cartItemCountResult;
-
-    if (cartProductIndex >= 0) {
-      // If product already exists in cart, update its quantity
-      if (count <= 0) {
-        user.cart.items.splice(cartProductIndex, 1);
-      } else {
-        user.cart.items[cartProductIndex].count = count;
-        cartItemCountResult = user.cart.items[cartProductIndex].count;
-      }
-    } else {
-      // If product doesn't exist in cart, add it as a new item
-      user.cart.items.push({ product: productId, count, price: product.price });
-      cartItemCountResult = count;
-    }
-
-    user.cart.totalAmount = this.recalculateCartTotalAmount(user);
-
-    await user.save();
-
-    if (cartItemCountResult) {
-      return {
-        product,
-        count: cartItemCountResult,
-        price: product.price,
-      };
-    }
-  }
-
-  async removeFromCart(tgId: number, productId: string, count: number) {
-    let user = await this.userModel.findOne({
-      tgId,
-    });
-
-    if (!user) {
-      user = await this.userModel.create({ tgId });
-    }
-
-    const cartProductIndex = user.cart.items.findIndex(
-      (item) => item.product.toString() === productId,
-    );
-
-    let cartItemCountResult;
-
-    if (cartProductIndex >= 0) {
-      if (user.cart.items[cartProductIndex].count > 1) {
-        // If product already exists in cart, update its quantity
-        user.cart.items[cartProductIndex].count -= count;
-        cartItemCountResult = user.cart.items[cartProductIndex].count;
-      } else {
-        user.cart.items.splice(cartProductIndex, 1);
-      }
-    }
-    const product = await this.productModel.findById(productId);
-
-    user.cart.totalAmount -= count * product.price;
-
-    await user.save();
-
-    if (cartItemCountResult) {
-      return {
-        product,
-        count: cartItemCountResult,
-        price: product.price,
-      };
-    }
-  }
-
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: number, updateUserDto: UpdateUserDto) {
+    return this.userModel.updateOne({ tgId: id }, updateUserDto);
   }
 
   async remove(tgId: number) {

@@ -48,23 +48,14 @@ export class BotsController {
   @Get(':categoryId/products')
   getProductsByCategory(
     @Param('categoryId') categoryId: string,
-    @Req() request: Request,
+    @Query('botId') botId?: string,
   ) {
-    const botId = request.headers['bot-id'];
-
-    return this.botsService.getProductsByCategory(
-      categoryId,
-      Array.isArray(botId) ? botId[0] : botId,
-    );
+    return this.botsService.getProductsByCategory(categoryId, botId);
   }
 
   @Get('/categories/list')
-  getCategoriesList(@Req() request: Request) {
-    const botId = request.headers['bot-id'];
-
-    return this.botsService.getCategoriesList(
-      Array.isArray(botId) ? botId[0] : botId,
-    );
+  getCategoriesList(@Query('botId') botId?: string) {
+    return this.botsService.getCategoriesList(botId);
   }
 
   @Patch(':id')
@@ -84,8 +75,6 @@ export class BotsController {
     @Param('token') token: string,
     @Query('id') id: string,
   ) {
-    console.log('!!!webhookUpdate->token:', token);
-    console.log('!!!webhookUpdate->update:', update);
     if (
       request.headers['x-telegram-bot-api-secret-token'] ===
       process.env.WEBHOOK_SECRET_TOKEN
@@ -105,12 +94,9 @@ export class BotsController {
   @Post('/createInvoiceLink')
   async createInvoiceLink(
     @Body() { prices }: CreateInvoiceLinkDto,
-    @Req() request: Request,
+    @Query('botId') botId?: string,
   ) {
-    const botId = request.headers['bot-id'];
-    const { token } = await this.botsService.findById(
-      Array.isArray(botId) ? botId[0] : botId,
-    );
+    const { token } = await this.botsService.findById(botId);
 
     const bot = new Telegraf(token);
 

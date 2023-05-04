@@ -40,7 +40,7 @@ export const createBot = async ({
 
     const { id: userId } = ctx.message.from;
     const { total_amount } = ctx.message.successful_payment;
-    const { items } = await usersService.getCart(userId);
+    const { items } = await usersService.getCart(userId, botId);
 
     await ordersService.create({
       items,

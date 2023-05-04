@@ -1,7 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ProductsModule } from './products/products.module';
 import { ConfigModule } from '@nestjs/config';
-import { CategoriesModule } from './categories/categories.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import * as util from 'util';
@@ -9,6 +8,8 @@ import { OrdersModule } from './orders/orders.module';
 import { BotsModule } from './bots/bots.module';
 import { AdminsModule } from './admins/admins.module';
 import * as process from 'process';
+import { BotIdMiddleware } from './bot-id.middleware';
+import { CartsModule } from './carts/carts.module';
 
 const getDbUrl = () =>
   util.format(
@@ -35,11 +36,15 @@ const getDbUrl = () =>
       retryAttempts: +process.env.RETRY_ATTEMPS,
     }),
     ProductsModule,
-    CategoriesModule,
     UsersModule,
     OrdersModule,
     BotsModule,
     AdminsModule,
+    CartsModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(BotIdMiddleware).forRoutes('bots', 'users');
+  }
+}

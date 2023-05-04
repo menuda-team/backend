@@ -4,6 +4,7 @@ import { UsersController } from './users.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Product, ProductSchema } from '../products/product.schema';
 import { UserSchema, User } from './user.schema';
+import { CartSchema, Cart } from '../carts/carts.schema';
 
 @Module({
   controllers: [UsersController],
@@ -12,6 +13,7 @@ import { UserSchema, User } from './user.schema';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: Product.name, schema: ProductSchema },
+      { name: Cart.name, schema: CartSchema },
     ]),
   ],
 })

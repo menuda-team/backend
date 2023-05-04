@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,8 +17,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post('/create')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto, @Query('botId') botId?: string) {
+    return this.usersService.create(createUserDto, botId);
   }
 
   @Get(':tgId')
@@ -36,29 +37,13 @@ export class UsersController {
   }
 
   @Get(':id/cart')
-  getCart(@Param('id') tgId: string) {
-    return this.usersService.getCart(+tgId);
-  }
-
-  @Patch('/:id/cart/add')
-  addToCart(@Param('id') tgId: string, @Body() { productId, count = 1 }) {
-    return this.usersService.addToCart(+tgId, productId, count);
-  }
-  @Patch('/:id/cart/set')
-  setCartItemsCount(
-    @Param('id') tgId: string,
-    @Body() { productId, count = 1 },
-  ) {
-    return this.usersService.setCartItemsCount(+tgId, productId, count);
-  }
-  @Patch('/:id/cart/remove')
-  removeFromCart(@Param('id') tgId: string, @Body() { productId, count = 1 }) {
-    return this.usersService.removeFromCart(+tgId, productId, count);
+  getCart(@Param('id') tgId: string, @Query('botId') botId?: string) {
+    return this.usersService.getCart(+tgId, botId);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+    return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(':tgId/remove')
