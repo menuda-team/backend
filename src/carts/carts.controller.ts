@@ -58,8 +58,13 @@ export class CartsController {
     return this.cartsService.setCartItemsCount(id, setCartItemsCountDto);
   }
 
+  @Delete('/clear')
+  removeAll() {
+    return this.cartsService.removeAll();
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.cartsService.remove(+id);
+    return this.cartsService.remove(id);
   }
 }

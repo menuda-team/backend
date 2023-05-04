@@ -146,7 +146,7 @@ export class CartsService {
   }
 
   findAll() {
-    return `This action returns all carts`;
+    return this.cartModel.find();
   }
 
   findOne(id: string) {
@@ -157,7 +157,11 @@ export class CartsService {
     return `This action updates a #${id} cart`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
+  remove(id: string) {
+    return this.cartModel.deleteOne({ _id: id });
+  }
+
+  removeAll() {
+    return this.cartModel.deleteMany();
   }
 }

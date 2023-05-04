@@ -109,6 +109,10 @@ export class UsersService {
     return this.userModel.updateOne({ tgId: id }, updateUserDto);
   }
 
+  async removeAll() {
+    return this.userModel.deleteMany();
+  }
+
   async remove(tgId: number) {
     const deletedUser = await this.userModel.findOneAndRemove({ tgId }).exec();
     if (!deletedUser) {
