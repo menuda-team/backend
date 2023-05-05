@@ -29,12 +29,6 @@ export class Bot {
   })
   readonly token: string;
 
-  @Prop()
-  readonly name?: string;
-
-  @Prop()
-  readonly description?: string;
-
   @Prop({
     required: true,
     type: [

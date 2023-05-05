@@ -50,15 +50,5 @@ export const createBot = async ({
     });
   });
 
-  await bot.telegram.setChatMenuButton({
-    menuButton: {
-      type: 'web_app',
-      text: 'Меню',
-      web_app: {
-        url: `https://menuda.ru/menu?bot-id=${botId}`,
-      },
-    },
-  });
-
   return bot;
 };

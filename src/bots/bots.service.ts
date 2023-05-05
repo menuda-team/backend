@@ -9,6 +9,8 @@ import { CreateProductDto } from '../products/dto/create-product.dto';
 import { Telegraf } from 'telegraf';
 import { CategoryListItem } from './bots.schema';
 
+const MENU_BUTTON_TEXT = 'Меню';
+
 @Injectable()
 export class BotsService implements OnModuleInit {
   constructor(
@@ -18,11 +20,26 @@ export class BotsService implements OnModuleInit {
 
   async setWebhook(token: string, id: string) {
     const bot = new Telegraf(token);
+
     await bot.launch({
       webhook: {
         domain: process.env.BACKEND_URL,
         hookPath: `/bots/update/${token}?id=${id}`,
         secretToken: process.env.WEBHOOK_SECRET_TOKEN,
+      },
+    });
+  }
+
+  async setMenuButton(token: string, id: string) {
+    const bot = new Telegraf(token);
+
+    await bot.telegram.setChatMenuButton({
+      menuButton: {
+        type: 'web_app',
+        text: MENU_BUTTON_TEXT,
+        web_app: {
+          url: `https://menuda.ru/menu?bot-id=${id}`,
+        },
       },
     });
   }
@@ -64,6 +81,7 @@ export class BotsService implements OnModuleInit {
     });
 
     await this.setWebhook(body.token, bot._id);
+    await this.setMenuButton(body.token, bot._id);
 
     return bot.save();
   }
