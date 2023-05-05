@@ -10,6 +10,7 @@ import { AdminsModule } from './admins/admins.module';
 import * as process from 'process';
 import { BotIdMiddleware } from './bot-id.middleware';
 import { CartsModule } from './carts/carts.module';
+import { ROUTES_WITH_BOT_ID_REQUIRED } from './constants';
 
 const getDbUrl = () =>
   util.format(
@@ -45,6 +46,6 @@ const getDbUrl = () =>
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(BotIdMiddleware).forRoutes('users');
+    consumer.apply(BotIdMiddleware).forRoutes(...ROUTES_WITH_BOT_ID_REQUIRED);
   }
 }
