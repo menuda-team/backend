@@ -45,6 +45,6 @@ const getDbUrl = () =>
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(BotIdMiddleware).forRoutes('bots', 'users');
+    consumer.apply(BotIdMiddleware).forRoutes('users');
   }
 }
