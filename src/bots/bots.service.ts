@@ -134,7 +134,7 @@ export class BotsService implements OnModuleInit {
   }
 
   findAll() {
-    return this.botModel.find().exec();
+    return this.botModel.find();
   }
 
   findByLogin(login: string) {
