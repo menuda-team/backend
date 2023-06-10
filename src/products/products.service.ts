@@ -28,10 +28,14 @@ export class ProductsService {
   }
 
   update(id: string, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+    return this.productModel.findByIdAndUpdate(id, updateProductDto, {
+      new: true,
+    });
   }
 
   remove(id: string) {
-    return `This action removes a #${id} product`;
+    return this.productModel.findByIdAndRemove(id, {
+      new: true,
+    });
   }
 }

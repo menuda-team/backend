@@ -2,6 +2,7 @@ import { Telegraf } from 'telegraf';
 import { BotsService } from './bots.service';
 import { UsersService } from '../users/users.service';
 import { OrdersService } from '../orders/orders.service';
+import { CartsService } from '../carts/carts.service';
 
 const START_MESSAGE = `
 Привет!
@@ -18,6 +19,7 @@ type CreateBotParams = {
   botsService: BotsService;
   usersService: UsersService;
   ordersService: OrdersService;
+  cartsService: CartsService;
   botId: string;
 };
 
@@ -26,6 +28,7 @@ export const createBot = async ({
   botsService,
   usersService,
   ordersService,
+  cartsService,
   botId,
 }: CreateBotParams) => {
   const bot = new Telegraf(token);
@@ -40,7 +43,9 @@ export const createBot = async ({
 
     const { id: userId } = ctx.message.from;
     const { total_amount } = ctx.message.successful_payment;
-    const { items } = await usersService.getCart(userId, botId);
+    const { items, _id } = await usersService.getCart(userId, botId);
+
+    await cartsService.remove(_id.toString());
 
     await ordersService.create({
       items,

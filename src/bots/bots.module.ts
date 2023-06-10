@@ -9,10 +9,11 @@ import { OrdersService } from '../orders/orders.service';
 import { UserSchema, User } from '../users/user.schema';
 import { Order, OrderSchema } from '../orders/order.schema';
 import { Cart, CartSchema } from '../carts/carts.schema';
+import { CartsService } from '../carts/carts.service';
 
 @Module({
   controllers: [BotsController],
-  providers: [BotsService, UsersService, OrdersService],
+  providers: [BotsService, UsersService, OrdersService, CartsService],
   imports: [
     MongooseModule.forFeature([
       { name: Bot.name, schema: BotSchema },

@@ -19,6 +19,7 @@ import { CreateInvoiceLinkDto } from './dto/create-invoice-link.dto';
 import { createBot } from './bots.factory';
 import { UsersService } from '../users/users.service';
 import { OrdersService } from '../orders/orders.service';
+import { CartsService } from '../carts/carts.service';
 
 const rubToCents = (rub: number) => rub * 100;
 
@@ -28,6 +29,7 @@ export class BotsController {
     private readonly botsService: BotsService,
     private readonly usersService: UsersService,
     private readonly ordersService: OrdersService,
+    private readonly cartsService: CartsService,
   ) {}
 
   @Post('/create')
@@ -84,6 +86,7 @@ export class BotsController {
         usersService: this.usersService,
         botsService: this.botsService,
         ordersService: this.ordersService,
+        cartsService: this.cartsService,
         botId: id,
       });
 
@@ -101,11 +104,11 @@ export class BotsController {
     const bot = new Telegraf(token);
 
     const link = await bot.telegram.createInvoiceLink({
-      title: 'Заказ',
-      description: 'Описание',
+      title: 'Заказ бургеров',
+      description: 'Приложение работает в тестовом режиме',
       provider_token: process.env.SBERBANK_TEST_TOKEN,
       currency: 'RUB',
-      payload: 'wtf',
+      payload: 'no',
       prices: prices.map(({ label, amount }) => ({
         label,
         amount: rubToCents(amount),

@@ -53,7 +53,7 @@ export class UsersService {
     return user.orders;
   }
 
-  async getCart(tgId: number, botId: string) {
+  async getCart(tgId: number, botId: string): Promise<CartDocument> {
     let user = await this.userModel
       .findOne({
         tgId,
