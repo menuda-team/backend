@@ -60,7 +60,7 @@ export class BotsController {
     return this.botsService.getCategoriesList(botId);
   }
 
-  @Patch(':id')
+  @Patch('/patch/:id')
   update(@Param('id') id: string, @Body() updateBotDto: UpdateBotDto) {
     return this.botsService.update(id, updateBotDto);
   }
