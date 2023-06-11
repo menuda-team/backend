@@ -145,8 +145,8 @@ export class BotsService implements OnModuleInit {
     return this.botModel.findById(id).exec();
   }
 
-  update(id: number, updateBotDto: UpdateBotDto) {
-    return `This action updates a #${id} bot`;
+  update(id: string, updateBotDto: UpdateBotDto) {
+    return this.botModel.findByIdAndUpdate(updateBotDto);
   }
 
   remove(id: string) {

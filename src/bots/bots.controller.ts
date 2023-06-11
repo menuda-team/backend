@@ -62,7 +62,7 @@ export class BotsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBotDto: UpdateBotDto) {
-    return this.botsService.update(+id, updateBotDto);
+    return this.botsService.update(id, updateBotDto);
   }
 
   @Delete(':id')

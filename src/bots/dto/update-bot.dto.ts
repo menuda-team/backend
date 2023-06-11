@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateBotDto } from './create-bot.dto';
-
-export class UpdateBotDto extends PartialType(CreateBotDto) {}
+export class UpdateBotDto {
+  readonly products?: string[];
+  readonly login: string;
+  readonly token: string;
+  readonly admins: string[];
+}
